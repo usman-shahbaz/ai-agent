@@ -1,5 +1,4 @@
 
-"""Tests for SQL validation and DuckDB query execution."""
 
 import pandas as pd
 import pytest
