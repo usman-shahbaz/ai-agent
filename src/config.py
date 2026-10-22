@@ -1,45 +1,26 @@
-
-"""Centralized application configuration."""
-
 import os
-from dataclasses import dataclass
+from zoneinfo import ZoneInfo
 
-from dotenv import load_dotenv
+TZ = ZoneInfo(os.environ.get("CLINIC_TZ", "Asia/Kolkata"))
+MODEL_ID = os.environ.get("MODEL_ID", "")
+MEDIA_BUCKET = os.environ.get("MEDIA_BUCKET", "")
+VOICE_LANGS = [x for x in os.environ.get("VOICE_LANGS", "en-IN,hi-IN").split(",") if x]
+TEMPLATE_LANG = os.environ.get("TEMPLATE_LANG", "en")
+CURRENCY = os.environ.get("CURRENCY", "₹")
 
-# Load variables from the local .env file when present.
-load_dotenv()
+# Staff = people allowed to use the ops assistant (digits only, with country code)
+STAFF = {s.strip().lstrip("+") for s in os.environ.get("STAFF_NUMBERS", "").split(",") if s.strip()}
 
+HORIZON_DAYS = 45        # how far ahead patients can book
+MAX_UPCOMING = 3         # max upcoming bookings per phone number
+HANDOFF_HOURS = 4        # bot stays quiet this long after a human handoff
 
-@dataclass(frozen=True)
-class Settings:
-    """Application settings loaded from environment variables."""
-
-    openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
-    openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-
-    max_upload_mb: int = int(os.getenv("MAX_UPLOAD_MB", "25"))
-    max_rows: int = int(os.getenv("MAX_ROWS", "500000"))
-    query_timeout_seconds: int = int(
-        os.getenv("QUERY_TIMEOUT_SECONDS", "15")
-    )
-
-    def validate(self) -> None:
-        """Validate configuration values before using them."""
-
-        if self.max_upload_mb < 1:
-            raise ValueError("MAX_UPLOAD_MB must be at least 1.")
-
-        if self.max_rows < 1:
-            raise ValueError("MAX_ROWS must be at least 1.")
-
-        if self.query_timeout_seconds < 1:
-            raise ValueError(
-                "QUERY_TIMEOUT_SECONDS must be at least 1."
-            )
-
-        if not self.openai_model.strip():
-            raise ValueError("OPENAI_MODEL cannot be empty.")
-
-
-settings = Settings()
-settings.validate()
+CLINIC = {
+    "name": os.environ.get("CLINIC_NAME", "CityCare Clinic"),
+    "address": os.environ.get("CLINIC_ADDRESS", "12 MG Road, Bengaluru"),
+    "phone": os.environ.get("CLINIC_PHONE", "+91 80 0000 0000"),
+    "hours": os.environ.get("CLINIC_HOURS", "Mon-Sat, see each doctor's schedule"),
+    "emergency_number": os.environ.get("EMERGENCY_NUMBER", "112"),
+    "payments": os.environ.get("CLINIC_PAYMENTS", "Cash, UPI and cards accepted at the clinic"),
+    "notes": os.environ.get("CLINIC_NOTES", "Please arrive 10 minutes early and bring previous reports."),
+}
