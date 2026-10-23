@@ -219,17 +219,4 @@ def move_booking(b, new_date, new_time, new_start_utc):
             raise SlotTaken()
         raise
 
-
-def bookings_for_phone(phone):
-    """Upcoming confirmed bookings for a phone number."""
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    return _query_all(
-        bookings_t, IndexName="ByPhone",
-        KeyConditionExpression=Key("phone").eq(phone) & Key("start_utc").gte(now),
-        FilterExpression=Attr("status").eq("confirmed"))
-
-
-def by_status(status, start_utc, end_utc):
-    return _query_all(
-        bookings_t, IndexName="ByStatus",
-        KeyConditionExpression=Key("status").eq(status) & Key("start_utc").between(start_utc, end_utc))
+ey("start_utc").between(start_utc, end_utc))
