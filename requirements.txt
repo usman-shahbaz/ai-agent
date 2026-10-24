@@ -7,3 +7,4 @@ azure-identity
 flask
 azure-core
 pydantic
+boto3
