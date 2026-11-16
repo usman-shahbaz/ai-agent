@@ -8,3 +8,4 @@ flask
 azure-core
 pydantic
 boto3
+aws-sdk
